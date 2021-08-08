@@ -230,8 +230,10 @@
     <Compile Include="Models\ViewModel\CategoryView.cs" />
     <Compile Include="Models\ViewModel\CommentView.cs" />
     <Compile Include="Models\ViewModel\FilmView.cs" />
+    <Compile Include="Models\ViewModel\LikeView.cs" />
     <Compile Include="Models\ViewModel\MovieView.cs" />
     <Compile Include="Models\ViewModel\RoomView.cs" />
+    <Compile Include="Models\ViewModel\SaveView.cs" />
     <Compile Include="Models\ViewModel\StudioView.cs" />
     <Compile Include="Models\ViewModel\UserView.cs" />
     <Compile Include="Models\XemGiDoContext.cs" />

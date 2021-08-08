@@ -357,5 +357,184 @@ namespace WebAPI_Movie.Controllers
                 return NotFound();
             }
         }
+
+        //Luu phim
+        [HttpGet]
+        [Route("api/SaveMovie")]
+        public IHttpActionResult Save( SaveView s)
+        {
+            if(s != null)
+            {
+                DateTime time = DateTime.Now;
+                string day = DateTime.Now.ToString("dd");
+                string month = DateTime.Now.ToString("MM");
+                string year = DateTime.Now.ToString("yyyy");
+                string Min = DateTime.Now.ToString("mm");
+                string sec = DateTime.Now.ToString("ss");
+                string SaveId = month + "" + day + "" + Min + "" + sec;
+
+                string MovieId = s.MovieId;
+                string UserId = s.UserId;
+
+                if(db.Saveds.Any(p => p.MovieId.Equals(MovieId)&& p.UserId.Equals(UserId)))
+                {
+                    return Json(new
+                    {
+                        message = "luu roi"
+                    });
+                }
+                else 
+                { 
+                    Saved save = new Saved();
+                    save.SaveId = SaveId;
+                    save.MovieId = MovieId;
+                    save.UserId = UserId;
+                    db.Saveds.Add(save);
+                    db.SaveChanges();
+                
+                    return Json(new
+                    {
+                        message = "ok"
+                    });
+                }
+            }
+            else
+            {
+                return Json(new
+                {
+                    message = "nguloz"
+                });
+            }
+        }
+
+        //Thich
+        [HttpGet]
+        [Route("api/LikeMovie")]
+        public IHttpActionResult Like(LikeView l)
+        {
+            if(l != null)
+            {
+                DateTime time = DateTime.Now;
+                string day = DateTime.Now.ToString("dd");
+                string month = DateTime.Now.ToString("MM");
+                string year = DateTime.Now.ToString("yyyy");
+                string Min = DateTime.Now.ToString("mm");
+                string sec = DateTime.Now.ToString("ss");
+
+                string LikeId =  month + "" + day + "" + Min + "" + sec;
+                string MovieId = l.MovieId;
+                string UserId = l.UserId;
+                bool status= true;
+
+               
+                if (db.Likings.Any(p => p.MovieId.Equals(l.MovieId) && p.UserId.Equals(l.UserId)))
+                { 
+                    var liked = db.Likings.FirstOrDefault(p => p.MovieId.Equals(l.MovieId) && p.UserId.Equals(l.UserId));
+                    status = (bool)liked.StatusLike;
+                    liked.StatusLike = !status;
+                    db.SaveChanges();
+                    return Json(new
+                    {
+                        message = "update"
+                    });
+                }
+                else
+                {
+                    Liking liking = new Liking();
+                    liking.LikeId = LikeId;
+                    liking.MovieId = MovieId;
+                    liking.UserId = UserId;
+                    liking.StatusLike = l.StatusLike;
+                    db.Likings.Add(liking);
+                    db.SaveChanges();
+                    return Json(new
+                    {
+                        message = "ok"
+                    });
+                }
+            }
+            else
+            {
+                return Json(new
+                {
+                    message = "nguloz"
+                });
+            }
+        }
+
+        //Dang ki
+        [HttpPost]
+        [Route("api/Register")]
+        public IHttpActionResult Register(UserView u)
+        {
+            if(u != null)
+            {
+                DateTime time = DateTime.Now;
+                string day = DateTime.Now.ToString("dd");
+                string month = DateTime.Now.ToString("MM");
+                string year = DateTime.Now.ToString("yyyy");
+                string Min = DateTime.Now.ToString("mm");
+                string sec = DateTime.Now.ToString("ss");
+
+                string UserId = month + "" + day + "" + Min + "" + sec;
+
+                if(db.Users.Any(p => p.Username.Equals(u.Username)))
+                {
+                    return Json(new
+                    {
+                        message = "not ok"
+                    });
+                }
+                else
+                {
+                    User user = new User();
+                    user.UserId = UserId;
+                    user.Username = u.Username;
+                    user.Password = u.Password;
+                    user.FullName = u.FullName;
+                    user.Birthday = DateTime.Parse(u.Birthday);
+                    user.Address = u.Address;
+                    user.Phone = u.Phone;
+                    user.Email = u.Email;
+                    user.Avatar = u.Avatar;
+                    user.Wallet = u.Wallet;
+                    db.Users.Add(user);
+                    db.SaveChanges();
+                    return Json(new
+                    {
+                        message = "ok"
+                    });
+                }
+            }
+            else
+            {
+                return Json(new
+                {
+                    message = "nguloz"
+                });
+            }
+        }
+
+        //Dang nhap
+        [HttpPost]
+        [Route("api/Login")]
+        public IHttpActionResult Login(UserView i)
+        {
+            if (db.Users.Any(p => p.Username.Equals(i.Username) && p.Password.Equals(i.Password)))
+            {
+                var User = db.Users.First(p => p.Username.Equals(i.Username));
+                return Json(new
+                {
+                    message = User
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    message = "not ok"
+                });
+            }
+        }
     }
 }

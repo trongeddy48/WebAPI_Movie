@@ -536,5 +536,178 @@ namespace WebAPI_Movie.Controllers
                 });
             }
         }
+
+        //List Room
+        [HttpGet]
+        [Route("api/Listroom")]
+        public IHttpActionResult Listroom()
+        {
+            try
+            {
+                List<Room> RoomList = db.Rooms.ToList();
+                List<RoomView> List = new List<RoomView>();
+                RoomList.ForEach((e) => {
+                    RoomView RooView = new RoomView();
+                    RooView.RoomId = e.RoomId;
+                    RooView.User1 = e.User1;
+                    RooView.User2 = e.User2;
+                    RooView.User3 = e.User3;
+                    RooView.User4 = e.User4;
+                    RooView.User5 = e.User5;
+                    RooView.User6 = e.User6;
+                    RooView.User7 = e.User7;
+                    RooView.User8 = e.User8;
+                    RooView.User9 = e.User9;
+                    RooView.User10 = e.User10;
+                    List.Add(RooView);
+                });
+                return Json(new
+                {
+                    RoomList = List
+                });
+            }
+            catch (Exception e)
+            {
+                return NotFound();
+            }
+        }
+
+        //Tao phong
+        [HttpGet]
+        [Route("api/CreateRoom")]
+        public IHttpActionResult CreateRoom()
+        {
+            {
+                DateTime time = DateTime.Now;
+                string day = DateTime.Now.ToString("dd");
+                string month = DateTime.Now.ToString("MM");
+                string year = DateTime.Now.ToString("yyyy");
+                string Min = DateTime.Now.ToString("mm");
+                string sec = DateTime.Now.ToString("ss");
+
+                string RoomId = month + "" + day + "" + Min + "" + sec;
+
+                    Room id = new Room();
+                    id.RoomId = RoomId;
+                    db.Rooms.Add(id);
+                    db.SaveChanges();
+                    return Json(new
+                    {
+                        RoomId = RoomId
+                    });
+            }
+        }
+
+        //Xoa phong
+        [HttpGet]
+        [Route("api/DeleteRoom")]
+        public IHttpActionResult DeleteRoom(string Id)
+        {
+            try { 
+                    var delete = db.Rooms.FirstOrDefault(p => p.RoomId.Equals(Id));
+                    db.Rooms.Remove(delete);
+                    db.SaveChanges();
+                    return Json(new
+                    {
+                        message = "ok"
+                    });
+                }
+            catch (Exception e)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet]
+        [Route("api/AddUserToRoom")]
+        public IHttpActionResult AddUserToRoom(string id, string user)
+        {
+            try
+            {
+                if (db.Rooms.Any(p => p.RoomId.Equals(id)))
+                   {
+                        var room = db.Rooms.FirstOrDefault(p => p.RoomId.Equals(id));
+                        if (room != null)
+                        {
+                            if (room.User1 == null)
+                            {
+                                room.User1 = user;
+                                db.SaveChanges();
+                            }
+                            else if (room.User2 == null)
+                            {
+                                room.User2 = user;
+                                db.SaveChanges();
+                            }
+                            else if (room.User3 == null)
+                            {
+                                room.User3 = user;
+                                db.SaveChanges();
+                            }
+                            else if (room.User4 == null)
+                            {
+                                room.User4 = user;
+                                db.SaveChanges();
+                            }
+                            else if (room.User5 == null)
+                            {
+                                room.User5 = user;
+                                db.SaveChanges();
+                            }
+                            else if (room.User6 == null)
+                            {
+                                room.User6 = user;
+                                db.SaveChanges();
+                            }
+                            else if (room.User7 == null)
+                            {
+                                room.User7 = user;
+                                db.SaveChanges();
+                            }
+                            else if (room.User8 == null)
+                            {
+                                room.User8 = user;
+                                db.SaveChanges();
+                            }
+                            else if (room.User9 == null)
+                            {
+                                room.User9 = user;
+                                db.SaveChanges();
+                            }
+                            else if (room.User10 == null)
+                            {
+                                room.User10 = user;
+                                db.SaveChanges();
+                            }
+                            else if (room.User10 != null)
+                            {
+                                return Json(new
+                                {
+                                    Room = "Full"
+                                });
+                            }
+                    }
+                    return Json(new
+                    {
+                        roomList = room
+                    });
+
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        Room = "Not Exist"
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                return Json(new
+                {
+                    Room = "Lỗi !"
+                });
+            }
+        }
     }
 }

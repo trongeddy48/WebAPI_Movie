@@ -1,0 +1,57 @@
+﻿@model WebAPI_Movie.Models.Movie
+
+@section scripts{
+
+    <script>
+
+        var id = '@Model.MovieId';
+        var urlhost = location.protocol + '//' + location.host + '/' + "api/FilmByMovieId";
+        $(document).ready(function () {
+            load()
+        });
+
+        function load() {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: urlhost,
+                    data: { 'id': id},
+                    success: function (data) {
+
+                        $(data.FilmList).each(function (index, element) {
+                            index++
+                            $("#group").append('<button type="button" class="btn btn-default" onclick="Film(' + element.URL + ')">' + index + '</button>');
+                        });
+                        
+                    }
+                });
+        }
+        function Film(url) {
+            console.log("url" + url);
+            
+        }
+        
+
+    </script>
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>RoomMovie</title>
+</head>
+<body style="margin-top:50px">
+    <div>
+        <div id="videolayer">
+            <p>@Model.Name</p>
+        </div>
+        <div id="group" class="btn-group" role="group" aria-label="...">
+            
+        </div>
+    </div>
+
+</body>
+</html>

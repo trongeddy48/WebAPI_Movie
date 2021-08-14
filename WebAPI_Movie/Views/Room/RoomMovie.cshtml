@@ -25,9 +25,11 @@
                 var video = document.getElementById('player');
                 video.src = url;
                 video.play();
+                $("#url").text("url :"+url)
             }
             hub.client.getcurrenttime = function (time) {
                 vid.currentTime = time
+                $("#notify").text(time)
             }
 
         });
@@ -40,9 +42,25 @@
                 url: "../api/Room",
                 data: { 'id': ro },
                 success: function (data) {
-                    $(data.FilmList).each(function (index, element) {
-                        $("#online ol").append("<li>" + element + "</li>")
+                    $(data.Room).each(function (index, element) {
+                        var arr = new Array();
+                        arr.push(element.User1)
+                        arr.push(element.User2)
+                        arr.push(element.User3)
+                        arr.push(element.User4)
+                        arr.push(element.User5)
+                        arr.push(element.User6)
+                        arr.push(element.User7)
+                        arr.push(element.User8)
+                        arr.push(element.User9)
+                        arr.push(element.User10)
+                        arr.forEach(e => {
+                            if (e != null) {
+                                $("#online ul").append("<li>" + e + "</li>")
+                            }
+                        });
                     });
+                  
                 }
             });
         }
@@ -90,18 +108,24 @@
     <title>RoomMovie</title>
     
 </head>
-<body style="margin-top:50px; background-color:black">
+<body style="margin-top:10px; background-color:black; color:white">
     <div>
-        <div>
-            <video id="player" controls width="360" height="240">
+        <b>Room ID: @Model.RoomId</b>
+
+        <br />
+        <div style="margin-top: 10px; text-align: center;">
+            <video id="player" controls width="100%" height="100%">
             </video>
         </div>
-        <div id="group" class="btn-group" role="group" aria-label="...">
+        <div style="text-align: center;" id="group" class="btn-group" role="group" aria-label="...">
         </div>
+        <b id="url"></b>
+        <b id="notify"></b>
+        <br />
         <div id="online">
-            <ol>
-                <li></li>
-            </ol>
+            <b>Online</b>
+            <ul>
+            </ul>
         </div>
     </div>
 </body>

@@ -18,7 +18,7 @@ namespace WebAPI_Movie.Controllers
             {
                 XemGiDoContext db = new XemGiDoContext();
                 var item = db.Movies.FirstOrDefault(p => p.MovieId.Equals(id));
-                room.Movies = item.MovieId;
+                room.Movies = id;
             }
             else room.Movies =  "";
             

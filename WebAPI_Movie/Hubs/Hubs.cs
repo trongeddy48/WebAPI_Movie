@@ -26,9 +26,14 @@ namespace WebAPI_Movie.Hubs
         {
             Clients.OthersInGroup(group).getcurrenttime(url);
         }
+        public void seturl(string group, string url)
+        {
+            Clients.OthersInGroup(group).geturl(url);
+        }
         public void send(string group, string name,string message)
         {
             Clients.OthersInGroup(group).message("(" + name + ")"+ message);
         }
+
     }
 }

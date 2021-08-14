@@ -1,13 +1,31 @@
-﻿@model WebAPI_Movie.Models.Movie
+﻿@model WebAPI_Movie.Models.MovieAndRoom
 
 @section scripts{
-
+    <script src="~/Scripts/jquery.signalR-2.4.2.js"></script>
+    <script src="~/signalr/Hubs"></script>
     <script>
 
-        var id = '@Model.MovieId';
+        var hub = $.connection.Movie;
+        var id = '@Model.Movies.MovieId';
+        var us = '@Model.UserId';
+        var ro = '@Model.RoomId';
         var urlhost = location.protocol + '//' + location.host + '/' + "api/FilmByMovieId";
         $(document).ready(function () {
             load()
+            $.connection.hub.start().done(function () {
+                hub.server.join(ro, us);
+
+            });
+           
+            hub.client.geturl = function (url) {
+                var video = document.getElementById('player');
+                video.src = url;
+                video.play();
+            }
+            hub.client.getcurrenttime = function (time) {
+                vid.currentTime = time
+            }
+
         });
 
         function load() {
@@ -20,20 +38,26 @@
 
                         $(data.FilmList).each(function (index, element) {
                             index++
-                            $("#group").append('<button type="button" class="btn btn-default" onclick="Film(' + element.URL + ')">' + index + '</button>');
+                            var btn = "<button class='btn btn-success' onclick='Film(" + '"' + element.URL + '"' + ")' >" + index + "</button>";;
+                            $("#group").append(btn);
+
                         });
-                        
+
                     }
                 });
         }
         function Film(url) {
-            console.log("url" + url);
-            
+            var video = document.getElementById('player');
+            video.src = url;
+            video.play();
+            hub.server.seturl(ro, url);
         }
-        
-
+        var vid = document.getElementById("player");
+        vid.onplay = function () { update() };
+        function update() {
+            hub.server.setcurrenttime(ro, vid.currentTime);
+        }
     </script>
-
 }
 
 <!DOCTYPE html>
@@ -43,15 +67,14 @@
     <meta name="viewport" content="width=device-width" />
     <title>RoomMovie</title>
 </head>
-<body style="margin-top:50px">
+<body style="margin-top:50px; background-color:black">
     <div>
-        <div id="videolayer">
-            <p>@Model.Name</p>
+        <div>
+            <video id="player" controls width="360" height="240">
+            </video>
         </div>
         <div id="group" class="btn-group" role="group" aria-label="...">
-            
         </div>
     </div>
-
 </body>
 </html>

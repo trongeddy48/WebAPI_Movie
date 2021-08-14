@@ -230,6 +230,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Liking.cs" />
     <Compile Include="Models\Movie.cs" />
+    <Compile Include="Models\MovieAndRoom.cs" />
     <Compile Include="Models\Room.cs" />
     <Compile Include="Models\Saved.cs" />
     <Compile Include="Models\Series.cs" />
@@ -282,6 +283,7 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
     <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
+    <None Include="Properties\PublishProfiles\Default Settings1.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />

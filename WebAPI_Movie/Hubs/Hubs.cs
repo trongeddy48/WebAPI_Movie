@@ -11,6 +11,7 @@ namespace WebAPI_Movie.Hubs
     [HubName("Movie")]
     public class Hubs : Hub
     {
+        
         public async Task join(string roomName, string name)
         {
             await Groups.Add(Context.ConnectionId, roomName);
@@ -21,6 +22,7 @@ namespace WebAPI_Movie.Hubs
         {
             await Groups.Remove(Context.ConnectionId, roomName);
             Clients.Group(roomName).message(" (" + name + ") leave.");
+          
         }
         public void setcurrenttime( string group,string url)
         {

@@ -1,12 +1,16 @@
 ﻿@model WebAPI_Movie.Models.MovieAndRoom
 
 @section scripts{
+   
     <script src="~/Scripts/jquery.signalR-2.4.2.js"></script>
     <script src="~/signalr/Hubs"></script>
     <script>
 
         var hub = $.connection.Movie;
-        var id = '@Model.Movies.MovieId';
+        var id = null;
+        if ('@Model.Movies' != "") {
+            id = '@Model.Movies';
+        } 
         var us = '@Model.UserId';
         var ro = '@Model.RoomId';
         var urlhost = location.protocol + '//' + location.host + '/' + "api/FilmByMovieId";
@@ -14,9 +18,9 @@
             load()
             $.connection.hub.start().done(function () {
                 hub.server.join(ro, us);
-
+                getroominf();
             });
-           
+
             hub.client.geturl = function (url) {
                 var video = document.getElementById('player');
                 video.src = url;
@@ -28,12 +32,28 @@
 
         });
 
-        function load() {
+        function getroominf() {
+            $("li").remove();
             $.ajax({
                 type: "GET",
                 dataType: "json",
-                url: urlhost,
-                    data: { 'id': id},
+                url: "../api/Room",
+                data: { 'id': ro },
+                success: function (data) {
+                    $(data.FilmList).each(function (index, element) {
+                        $("#online ol").append("<li>" + element + "</li>")
+                    });
+                }
+            });
+        }
+
+        function load() {
+            if (id != null) {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: urlhost,
+                    data: { 'id': id },
                     success: function (data) {
 
                         $(data.FilmList).each(function (index, element) {
@@ -45,6 +65,8 @@
 
                     }
                 });
+            }
+
         }
         function Film(url) {
             var video = document.getElementById('player');
@@ -66,6 +88,7 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>RoomMovie</title>
+    
 </head>
 <body style="margin-top:50px; background-color:black">
     <div>
@@ -74,6 +97,11 @@
             </video>
         </div>
         <div id="group" class="btn-group" role="group" aria-label="...">
+        </div>
+        <div id="online">
+            <ol>
+                <li></li>
+            </ol>
         </div>
     </div>
 </body>

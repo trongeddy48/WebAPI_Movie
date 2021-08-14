@@ -12,11 +12,16 @@ namespace WebAPI_Movie.Controllers
         // GET: Room
        
         public ActionResult RoomMovie(string id, string roomid ,string userid)
-        {
-            XemGiDoContext db = new XemGiDoContext();
-            var item = db.Movies.FirstOrDefault(p => p.MovieId.Equals(id));
+        { 
             MovieAndRoom room = new MovieAndRoom();
-            room.Movies = item;
+            if (id != "")
+            {
+                XemGiDoContext db = new XemGiDoContext();
+                var item = db.Movies.FirstOrDefault(p => p.MovieId.Equals(id));
+                room.Movies = item.MovieId;
+            }
+            else room.Movies =  "";
+            
             room.RoomId = roomid;
             room.UserId = userid;
             return View(room);

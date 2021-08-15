@@ -7,32 +7,77 @@
     <script>
 
         var hub = $.connection.Movie;
+        var role = "0";
         var id = null;
         if ('@Model.Movies' != "") {
             id = '@Model.Movies';
-        } 
+            role = "1";
+        }
+        
         var us = '@Model.UserId';
         var ro = '@Model.RoomId';
+
+
+        var urlm = "" ;
+        var timer = "";
+
+
         var urlhost = location.protocol + '//' + location.host + '/' + "api/FilmByMovieId";
         $(document).ready(function () {
             load()
+            if (role == "0") {
+                // vid.removeAttribute('controls')
+                var btn = "<button class='btn btn-danger' onclick='live()' >Go live</button>";;
+                $("#group").append(btn);
+            } 
             $.connection.hub.start().done(function () {
                 hub.server.join(ro, us);
                 getroominf();
+                
             });
+
+            hub.client.getlive = function (url, ti) {
+      
+                if (role == "1") {
+                    hub.server.send(ro, urlm, timer)
+                }
+                if (role == "0") {
+                    var video = document.getElementById('player');
+                    video.src = url;
+                    video.currentTime = ti;
+                    video.play();
+                    $("#url").text("url :" + url)
+                    $("#notify").text(ti)
+                }
+            }
+
+            hub.client.message = function (r) {
+                //alert("welcome")
+                //if (role == "1") {
+                //    hub.server.seturl(ro, urlm);
+                //    hub.server.setcurrenttime(ro, timer);
+                //}
+            }
 
             hub.client.geturl = function (url) {
                 var video = document.getElementById('player');
                 video.src = url;
                 video.play();
+                if (role == "0")
                 $("#url").text("url :"+url)
             }
             hub.client.getcurrenttime = function (time) {
                 vid.currentTime = time
+                vid.play();
+                if (role == "0")
                 $("#notify").text(time)
             }
 
         });
+
+        function live() {
+            hub.server.send(ro, "", "");
+        }
 
         function getroominf() {
             $("li").remove();
@@ -76,7 +121,7 @@
 
                         $(data.FilmList).each(function (index, element) {
                             index++
-                            var btn = "<button class='btn btn-success' onclick='Film(" + '"' + element.URL + '"' + ")' >" + index + "</button>";;
+                            var btn = "<button class='btn btn-success' onclick='Film(" + '"' + element.URL + '"' + ")' >" + index + "</button>";
                             $("#group").append(btn);
 
                         });
@@ -87,14 +132,24 @@
 
         }
         function Film(url) {
-            var video = document.getElementById('player');
+            var video = document.getElementById('player');     
             video.src = url;
             video.play();
+            video.ontimeupdate = function () {
+                timer = video.currentTime;
+            }
+            if (role =="1")
             hub.server.seturl(ro, url);
+            urlm = url;
         }
         var vid = document.getElementById("player");
+
+
         vid.onplay = function () { update() };
+
+
         function update() {
+            if (role=="1")
             hub.server.setcurrenttime(ro, vid.currentTime);
         }
     </script>
@@ -114,7 +169,7 @@
 
         <br />
         <div style="margin-top: 10px; text-align: center;">
-            <video id="player" controls width="100%" height="100%">
+            <video id="player" autoplay controls width="100%" height="100%">
             </video>
         </div>
         <div style="text-align: center;" id="group" class="btn-group" role="group" aria-label="...">

@@ -21,20 +21,39 @@
         var urlm = "" ;
         var timer = "";
 
+        window.onbeforeunload = function () {
+            hub.server.leave(ro, us);
+            if (role == "1") {
+                delroom();
+                hub.server.leaveroom(ro);
+            }
+            if (role == "0") {
+                deluser();
+            }
+        }
+
 
         var urlhost = location.protocol + '//' + location.host + '/' + "api/FilmByMovieId";
+
+
+
         $(document).ready(function () {
-            load()
+            load();
+            getroominf();
+            
             if (role == "0") {
                 // vid.removeAttribute('controls')
                 var btn = "<button class='btn btn-danger' onclick='live()' >Go live</button>";;
                 $("#group").append(btn);
             } 
             $.connection.hub.start().done(function () {
-                hub.server.join(ro, us);
-                getroominf();
-                
+                hub.server.join(ro, us);   
             });
+
+            hub.client.getleave = function (user) {
+                if (role =="0")
+                window.location.href = "/Room/index";
+            }
 
             hub.client.getlive = function (url, ti) {
       
@@ -52,11 +71,8 @@
             }
 
             hub.client.message = function (r) {
-                //alert("welcome")
-                //if (role == "1") {
-                //    hub.server.seturl(ro, urlm);
-                //    hub.server.setcurrenttime(ro, timer);
-                //}
+                getroominf();
+                live();
             }
 
             hub.client.geturl = function (url) {
@@ -108,6 +124,36 @@
                   
                 }
             });
+        }
+
+        function deluser() {
+            if (ro != null) {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "../api/DelUserAtRoom",
+                    data: { id : ro, user: us },
+                    success: function (data) {
+                        getroominf();
+                    }
+                });
+            }
+        }
+
+        function delroom() {
+            if (ro != null) {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "../api/DeleteRoom",
+                    data: { 'id': ro },
+                    success: function (data) {
+                        if (data.message == "ok") {
+                          
+                        }
+                    }
+                });
+            }
         }
 
         function load() {
@@ -177,7 +223,7 @@
         <b id="url"></b>
         <b id="notify"></b>
         <br />
-        <div id="online">
+        <div style="margin-top:5px" id="online">
             <b>Online</b>
             <ul>
             </ul>

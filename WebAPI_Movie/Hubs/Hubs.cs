@@ -23,7 +23,10 @@ namespace WebAPI_Movie.Hubs
         {
             await Groups.Remove(Context.ConnectionId, roomName);
             Clients.Group(roomName).message(" (" + name + ") leave.");
-          
+           
+        }
+        public void leaveroom(string roomName) {
+            Clients.Group(roomName).getleave(roomName);
         }
         public void setcurrenttime( string group,string url)
         {

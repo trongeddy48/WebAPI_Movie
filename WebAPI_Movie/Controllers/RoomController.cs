@@ -11,6 +11,10 @@ namespace WebAPI_Movie.Controllers
     {
         // GET: Room
        
+        public ActionResult index()
+        {
+            return View();
+        }
         public ActionResult RoomMovie(string id, string roomid ,string userid)
         { 
             MovieAndRoom room = new MovieAndRoom();

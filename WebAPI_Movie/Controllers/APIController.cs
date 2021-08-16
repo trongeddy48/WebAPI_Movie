@@ -619,6 +619,86 @@ namespace WebAPI_Movie.Controllers
         }
 
         [HttpGet]
+        [Route("api/DelUserAtRoom")]
+        public IHttpActionResult Deluseratroom (string id , string user)
+        {
+            try
+            {
+                if (db.Rooms.Any(p => p.RoomId.Equals(id))){
+                    var room = db.Rooms.FirstOrDefault(p => p.Equals(id));
+                    if (room.User1 == user)
+                    {
+                        room.User1 = null;
+                        db.SaveChanges();
+                    }
+                    else if (room.User2 == user)
+                    {
+                        room.User2 = null;
+                        db.SaveChanges();
+                    }
+                    else if (room.User3 == user)
+                    {
+                        room.User3 = null;
+                        db.SaveChanges();
+                    }
+                    else if (room.User4 == user)
+                    {
+                        room.User4 = null;
+                        db.SaveChanges();
+                    }
+                    else if (room.User5 == user)
+                    {
+                        room.User5 = null;
+                        db.SaveChanges();
+                    }
+                    else if (room.User6 == user)
+                    {
+                        room.User6 = null ;
+                        db.SaveChanges();
+                    }
+                    else if (room.User7 == user)
+                    {
+                        room.User7 = null;
+                        db.SaveChanges();
+                    }
+                    else if (room.User8 == user)
+                    {
+                        room.User8 = null;
+                        db.SaveChanges();
+                    }
+                    else if (room.User9 == user)
+                    {
+                        room.User9 = null;
+                        db.SaveChanges();
+                    }
+                    else if (room.User10 == user)
+                    {
+                        room.User10 = null;
+                        db.SaveChanges();
+                    }
+                    return Json(new
+                    {
+                        Room = "Ok"
+                    });
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        Room = "Not exist"
+                    });
+                }
+
+            }catch(Exception e)
+            {
+                return Json(new
+                {
+                    Room = "Error"
+                });
+            }
+        }
+
+        [HttpGet]
         [Route("api/AddUserToRoom")]
         public IHttpActionResult AddUserToRoom(string id, string user)
         {
@@ -689,7 +769,7 @@ namespace WebAPI_Movie.Controllers
                     }
                     return Json(new
                     {
-                        roomList = room
+                        Room = "Ok"
                     });
 
                 }

@@ -502,7 +502,7 @@ namespace WebAPI_Movie.Controllers
                     db.SaveChanges();
                     return Json(new
                     {
-                        message = "ok"
+                        message = user
                     });
                 }
             }

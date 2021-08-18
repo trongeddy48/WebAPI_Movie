@@ -799,20 +799,34 @@ namespace WebAPI_Movie.Controllers
         {
             XemGiDoContext db = new XemGiDoContext();
             var result = db.Movies.Where(x => x.Name.Contains(search)).ToList();
-            List<MovieView> List = new List<MovieView>();
-            result.ForEach((e) => {
-                MovieView MovView = new MovieView();
-                MovView.MovieId = e.MovieId;
-                MovView.Name = e.Name;
-                MovView.Views = e.Views;
-                MovView.Episodes = e.Episodes;
-                MovView.Years = e.Years.Value.ToString("yyyy");
-                MovView.Description = e.Description;
-                MovView.Thumbnails = e.Thumbnails;
-                MovView.Fee = e.Fee;
-                List.Add(MovView);
-            });
-            return Ok(List);
+            if (result != null)
+            {
+                List<MovieView> List = new List<MovieView>();
+                result.ForEach((e) =>
+                {
+                    MovieView MovView = new MovieView();
+                    MovView.MovieId = e.MovieId;
+                    MovView.Name = e.Name;
+                    MovView.Views = e.Views;
+                    MovView.Episodes = e.Episodes;
+                    MovView.Years = e.Years.Value.ToString("yyyy");
+                    MovView.Description = e.Description;
+                    MovView.Thumbnails = e.Thumbnails;
+                    MovView.Fee = e.Fee;
+                    List.Add(MovView);
+                });
+                return Json(new
+                {
+                    Messages = List
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    Messages = "Lỗi"
+                });
+            }
         }
     }
 }

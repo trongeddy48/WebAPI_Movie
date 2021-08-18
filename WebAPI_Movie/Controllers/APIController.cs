@@ -25,6 +25,7 @@ namespace WebAPI_Movie.Controllers
                     CategoryView CateView = new CategoryView();
                     CateView.CategoryId = e.CategoryId;
                     CateView.Name = e.Name;
+                    CateView.Icon = e.Icon;
                     List.Add(CateView);
                 });
                 return Json(new

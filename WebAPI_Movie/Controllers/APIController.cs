@@ -236,7 +236,7 @@ namespace WebAPI_Movie.Controllers
                     User = userView
                 });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return NotFound();
             }
@@ -361,9 +361,9 @@ namespace WebAPI_Movie.Controllers
         //Luu phim
         [HttpGet]
         [Route("api/SaveMovie")]
-        public IHttpActionResult Save( SaveView s)
+        public IHttpActionResult Save(SaveView s)
         {
-            if(s != null)
+            if (s != null)
             {
                 DateTime time = DateTime.Now;
                 string day = DateTime.Now.ToString("dd");
@@ -376,22 +376,22 @@ namespace WebAPI_Movie.Controllers
                 string MovieId = s.MovieId;
                 string UserId = s.UserId;
 
-                if(db.Saveds.Any(p => p.MovieId.Equals(MovieId)&& p.UserId.Equals(UserId)))
+                if (db.Saveds.Any(p => p.MovieId.Equals(MovieId) && p.UserId.Equals(UserId)))
                 {
                     return Json(new
                     {
                         message = "luu roi"
                     });
                 }
-                else 
-                { 
+                else
+                {
                     Saved save = new Saved();
                     save.SaveId = SaveId;
                     save.MovieId = MovieId;
                     save.UserId = UserId;
                     db.Saveds.Add(save);
                     db.SaveChanges();
-                
+
                     return Json(new
                     {
                         message = "ok"
@@ -412,7 +412,7 @@ namespace WebAPI_Movie.Controllers
         [Route("api/LikeMovie")]
         public IHttpActionResult Like(LikeView l)
         {
-            if(l != null)
+            if (l != null)
             {
                 DateTime time = DateTime.Now;
                 string day = DateTime.Now.ToString("dd");
@@ -421,14 +421,14 @@ namespace WebAPI_Movie.Controllers
                 string Min = DateTime.Now.ToString("mm");
                 string sec = DateTime.Now.ToString("ss");
 
-                string LikeId =  month + "" + day + "" + Min + "" + sec;
+                string LikeId = month + "" + day + "" + Min + "" + sec;
                 string MovieId = l.MovieId;
                 string UserId = l.UserId;
-                bool status= true;
+                bool status = true;
 
-               
+
                 if (db.Likings.Any(p => p.MovieId.Equals(l.MovieId) && p.UserId.Equals(l.UserId)))
-                { 
+                {
                     var liked = db.Likings.FirstOrDefault(p => p.MovieId.Equals(l.MovieId) && p.UserId.Equals(l.UserId));
                     status = (bool)liked.StatusLike;
                     liked.StatusLike = !status;
@@ -467,7 +467,7 @@ namespace WebAPI_Movie.Controllers
         [Route("api/Register")]
         public IHttpActionResult Register(UserView u)
         {
-            if(u != null)
+            if (u != null)
             {
                 DateTime time = DateTime.Now;
                 string day = DateTime.Now.ToString("dd");
@@ -478,7 +478,7 @@ namespace WebAPI_Movie.Controllers
 
                 string UserId = month + "" + day + "" + Min + "" + sec;
 
-                if(db.Users.Any(p => p.Username.Equals(u.Username)))
+                if (db.Users.Any(p => p.Username.Equals(u.Username)))
                 {
                     return Json(new
                     {
@@ -587,14 +587,14 @@ namespace WebAPI_Movie.Controllers
 
                 string RoomId = month + "" + day + "" + Min + "" + sec;
 
-                    Room id = new Room();
-                    id.RoomId = RoomId;
-                    db.Rooms.Add(id);
-                    db.SaveChanges();
-                    return Json(new
-                    {
-                        RoomId = RoomId
-                    });
+                Room id = new Room();
+                id.RoomId = RoomId;
+                db.Rooms.Add(id);
+                db.SaveChanges();
+                return Json(new
+                {
+                    RoomId = RoomId
+                });
             }
         }
 
@@ -603,15 +603,15 @@ namespace WebAPI_Movie.Controllers
         [Route("api/DeleteRoom")]
         public IHttpActionResult DeleteRoom(string Id)
         {
-            try { 
-                    var delete = db.Rooms.FirstOrDefault(p => p.RoomId.Equals(Id));
-                    db.Rooms.Remove(delete);
-                    db.SaveChanges();
-                    return Json(new
-                    {
-                        message = "ok"
-                    });
-                }
+            try {
+                var delete = db.Rooms.FirstOrDefault(p => p.RoomId.Equals(Id));
+                db.Rooms.Remove(delete);
+                db.SaveChanges();
+                return Json(new
+                {
+                    message = "ok"
+                });
+            }
             catch (Exception e)
             {
                 return NotFound();
@@ -620,62 +620,64 @@ namespace WebAPI_Movie.Controllers
 
         [HttpGet]
         [Route("api/DelUserAtRoom")]
-        public IHttpActionResult Deluseratroom (string id , string user)
+        public IHttpActionResult Deluseratroom(string id, string user)
         {
             try
             {
-                if (db.Rooms.Any(p => p.RoomId.Equals(id))){
-                    var room = db.Rooms.FirstOrDefault(p => p.Equals(id));
-                    if (room.User1 == user)
+                var room = db.Rooms.First(p => p.Equals(id));
+                if (room != null) {
+                    
+                    if (room.User1.Equals(user))
                     {
-                        room.User1 = null;
-                        db.SaveChanges();
+                        room.User1 = "";
+                        
                     }
-                    else if (room.User2 == user)
+                    else if (room.User2.Equals(user))
                     {
-                        room.User2 = null;
-                        db.SaveChanges();
+                        room.User2 = "";
+                        
                     }
-                    else if (room.User3 == user)
+                    else if (room.User3.Equals(user))
                     {
-                        room.User3 = null;
-                        db.SaveChanges();
+                        room.User3 = "";
+                        
                     }
-                    else if (room.User4 == user)
+                    else if (room.User4.Equals(user))
                     {
-                        room.User4 = null;
-                        db.SaveChanges();
+                        room.User4 = "";
+                        
                     }
-                    else if (room.User5 == user)
+                    else if (room.User5.Equals(user))
                     {
-                        room.User5 = null;
-                        db.SaveChanges();
+                        room.User5 = "";
+                        
                     }
-                    else if (room.User6 == user)
+                    else if (room.User6.Equals(user))
                     {
-                        room.User6 = null ;
-                        db.SaveChanges();
+                        room.User6 = "";
+                        
                     }
-                    else if (room.User7 == user)
+                    else if (room.User7.Equals(user))
                     {
-                        room.User7 = null;
-                        db.SaveChanges();
+                        room.User7 = "";
+                        
                     }
-                    else if (room.User8 == user)
+                    else if (room.User8.Equals(user))
                     {
-                        room.User8 = null;
-                        db.SaveChanges();
+                        room.User8 = "";
+                        
                     }
-                    else if (room.User9 == user)
+                    else if (room.User9.Equals(user))
                     {
-                        room.User9 = null;
-                        db.SaveChanges();
+                        room.User9 = "";
+                        
                     }
-                    else if (room.User10 == user)
+                    else if (room.User10.Equals(user))
                     {
-                        room.User10 = null;
-                        db.SaveChanges();
+                        room.User10 = "";
+                        
                     }
+                    db.SaveChanges();
                     return Json(new
                     {
                         Room = "Ok"
@@ -689,11 +691,11 @@ namespace WebAPI_Movie.Controllers
                     });
                 }
 
-            }catch(Exception e)
+            } catch (Exception e)
             {
                 return Json(new
                 {
-                    Room = "Error"
+                    Room = e.Message.ToString()
                 });
             }
         }
@@ -705,67 +707,67 @@ namespace WebAPI_Movie.Controllers
             try
             {
                 if (db.Rooms.Any(p => p.RoomId.Equals(id)))
-                   {
-                        var room = db.Rooms.FirstOrDefault(p => p.RoomId.Equals(id));
-                        if (room != null)
+                {
+                    var room = db.Rooms.FirstOrDefault(p => p.RoomId.Equals(id));
+                    if (room != null)
+                    {
+                        if (room.User1 == null)
                         {
-                            if (room.User1 == null)
+                            room.User1 = user;
+                            db.SaveChanges();
+                        }
+                        else if (room.User2 == null)
+                        {
+                            room.User2 = user;
+                            db.SaveChanges();
+                        }
+                        else if (room.User3 == null)
+                        {
+                            room.User3 = user;
+                            db.SaveChanges();
+                        }
+                        else if (room.User4 == null)
+                        {
+                            room.User4 = user;
+                            db.SaveChanges();
+                        }
+                        else if (room.User5 == null)
+                        {
+                            room.User5 = user;
+                            db.SaveChanges();
+                        }
+                        else if (room.User6 == null)
+                        {
+                            room.User6 = user;
+                            db.SaveChanges();
+                        }
+                        else if (room.User7 == null)
+                        {
+                            room.User7 = user;
+                            db.SaveChanges();
+                        }
+                        else if (room.User8 == null)
+                        {
+                            room.User8 = user;
+                            db.SaveChanges();
+                        }
+                        else if (room.User9 == null)
+                        {
+                            room.User9 = user;
+                            db.SaveChanges();
+                        }
+                        else if (room.User10 == null)
+                        {
+                            room.User10 = user;
+                            db.SaveChanges();
+                        }
+                        else if (room.User10 != null)
+                        {
+                            return Json(new
                             {
-                                room.User1 = user;
-                                db.SaveChanges();
-                            }
-                            else if (room.User2 == null)
-                            {
-                                room.User2 = user;
-                                db.SaveChanges();
-                            }
-                            else if (room.User3 == null)
-                            {
-                                room.User3 = user;
-                                db.SaveChanges();
-                            }
-                            else if (room.User4 == null)
-                            {
-                                room.User4 = user;
-                                db.SaveChanges();
-                            }
-                            else if (room.User5 == null)
-                            {
-                                room.User5 = user;
-                                db.SaveChanges();
-                            }
-                            else if (room.User6 == null)
-                            {
-                                room.User6 = user;
-                                db.SaveChanges();
-                            }
-                            else if (room.User7 == null)
-                            {
-                                room.User7 = user;
-                                db.SaveChanges();
-                            }
-                            else if (room.User8 == null)
-                            {
-                                room.User8 = user;
-                                db.SaveChanges();
-                            }
-                            else if (room.User9 == null)
-                            {
-                                room.User9 = user;
-                                db.SaveChanges();
-                            }
-                            else if (room.User10 == null)
-                            {
-                                room.User10 = user;
-                                db.SaveChanges();
-                            }
-                            else if (room.User10 != null)
-                            {
-                                return Json(new
-                                {
-                                    Room = "Full"
-                                });
-                            }
+                                Room = "Full"
+                            });
+                        }
                     }
                     return Json(new
                     {
@@ -788,6 +790,29 @@ namespace WebAPI_Movie.Controllers
                     Room = "Lỗi !"
                 });
             }
+        }
+
+        //Tim kiem theo ten phim
+        [HttpGet]
+        [Route("api/SearchFromMovie")]
+        public IHttpActionResult SearchFromMovie(string search)
+        {
+            XemGiDoContext db = new XemGiDoContext();
+            var result = db.Movies.Where(x => x.Name.Contains(search)).ToList();
+            List<MovieView> List = new List<MovieView>();
+            result.ForEach((e) => {
+                MovieView MovView = new MovieView();
+                MovView.MovieId = e.MovieId;
+                MovView.Name = e.Name;
+                MovView.Views = e.Views;
+                MovView.Episodes = e.Episodes;
+                MovView.Years = e.Years.Value.ToString("yyyy");
+                MovView.Description = e.Description;
+                MovView.Thumbnails = e.Thumbnails;
+                MovView.Fee = e.Fee;
+                List.Add(MovView);
+            });
+            return Ok(List);
         }
     }
 }

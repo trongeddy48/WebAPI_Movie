@@ -4,11 +4,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using WebAPI_Movie.Models;
 using WebAPI_Movie.Models.ViewModel;
 
 namespace WebAPI_Movie.Controllers
 {
+    [EnableCors(origins: "http://trongeddy48-001-site1.etempurl.com", headers: "*", methods: "*")]
     public class APIController : ApiController
     {
         private XemGiDoContext db = new XemGiDoContext();

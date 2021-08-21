@@ -364,9 +364,9 @@ namespace WebAPI_Movie.Controllers
         //Luu phim
         [HttpGet]
         [Route("api/SaveMovie")]
-        public IHttpActionResult Save(SaveView s)
+        public IHttpActionResult Save(String movieId, String userId)
         {
-            if (s != null)
+            if (movieId != null || userId  != null)
             {
                 DateTime time = DateTime.Now;
                 string day = DateTime.Now.ToString("dd");
@@ -376,8 +376,8 @@ namespace WebAPI_Movie.Controllers
                 string sec = DateTime.Now.ToString("ss");
                 string SaveId = month + "" + day + "" + Min + "" + sec;
 
-                string MovieId = s.MovieId;
-                string UserId = s.UserId;
+                string MovieId = movieId;
+                string UserId = userId;
 
                 if (db.Saveds.Any(p => p.MovieId.Equals(MovieId) && p.UserId.Equals(UserId)))
                 {
@@ -406,6 +406,73 @@ namespace WebAPI_Movie.Controllers
                 return Json(new
                 {
                     message = "nguloz"
+                });
+            }
+        }
+
+        //Huy luu phim
+        [HttpGet]
+        [Route("api/CancelSave")]
+        public IHttpActionResult HuyLuu(String movieId, String userId)
+        {
+            try
+            {
+                var check = db.Saveds.First(p => p.MovieId.Equals(movieId) && p.UserId.Equals(userId));
+
+                if (check != null)
+                {
+                    db.Saveds.Remove(check);
+                    db.SaveChanges();
+                    return Json(new
+                    {
+                        message = "ok"
+                    });
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        message = "nguloz"
+                    });
+                }
+            }catch (Exception e)
+            {
+                return Json(new
+                {
+                    message = "not ok"
+                });
+            }
+        }
+
+        //Check Da~ Luu
+        [HttpGet]
+        [Route("api/CheckSaved")]
+        public IHttpActionResult DaLuu(String movieId, String userId)
+        {
+            try
+            {
+                var check = db.Saveds.First(p => p.MovieId.Equals(movieId) && p.UserId.Equals(userId));
+
+                if (check != null)
+                {
+                    return Json(new
+                    {
+                        message = "ok"
+                    });
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        message = "nguloz"
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                return Json(new
+                {
+                    message = "not ok"
                 });
             }
         }

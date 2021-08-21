@@ -477,6 +477,33 @@ namespace WebAPI_Movie.Controllers
             }
         }
 
+        //Danh sach phim da luu
+        [HttpGet]
+        [Route("api/UserSavedFilm")]
+        public IHttpActionResult UserSavedFilm(string id)
+        {
+            try
+            {
+                List<Saved> ListSavedFilm = db.Saveds.Where(p => p.UserId.Equals(id)).ToList();
+                List<SavedView> List = new List<SavedView>();
+                ListSavedFilm.ForEach((e) => {
+                    SavedView SView = new SavedView();
+                    SView.SaveId = e.SaveId;
+                    SView.MovieId = e.MovieId;
+                    SView.UserId = e.UserId;
+                    List.Add(SView);
+                });
+                return Json(new
+                {
+                    ListSavedFilm = List
+                });
+            }
+            catch (Exception e)
+            {
+                return NotFound();
+            }
+        }
+
         //Thich
         [HttpGet]
         [Route("api/LikeMovie")]

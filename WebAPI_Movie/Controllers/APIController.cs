@@ -485,13 +485,19 @@ namespace WebAPI_Movie.Controllers
             try
             {
                 List<Saved> ListSavedFilm = db.Saveds.Where(p => p.UserId.Equals(id)).ToList();
-                List<SavedView> List = new List<SavedView>();
+                List<MovieView> List = new List<MovieView>();
                 ListSavedFilm.ForEach((e) => {
-                    SavedView SView = new SavedView();
-                    SView.SaveId = e.SaveId;
-                    SView.MovieId = e.MovieId;
-                    SView.UserId = e.UserId;
-                    List.Add(SView);
+                    MovieView MView = new MovieView();
+                    var saved = db.Movies.First(p => p.MovieId.Equals(e.MovieId));
+                    MView.MovieId = saved.MovieId;
+                    MView.Name = saved.Name;
+                    MView.Views = saved.Views;
+                    MView.Episodes = saved.Episodes;
+                    MView.Years = saved.Years.Value.ToString("yyyy");
+                    MView.Description = saved.Description;
+                    MView.Thumbnails = saved.Thumbnails;
+                    MView.Fee = saved.Fee;
+                    List.Add(MView);
                 });
                 return Json(new
                 {

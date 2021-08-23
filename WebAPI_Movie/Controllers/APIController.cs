@@ -273,6 +273,56 @@ namespace WebAPI_Movie.Controllers
                 return NotFound();
             }
         }
+
+        //Them comment moi
+        [HttpGet]
+        [Route("api/AddComment")]
+        public IHttpActionResult AddComment(string MovieId, string GuestName, string Comment)
+        {
+            try
+            {
+                if (MovieId != null || GuestName != null || Comment != null)
+                {
+                    DateTime time = DateTime.Now;
+                    string day = DateTime.Now.ToString("dd");
+                    string month = DateTime.Now.ToString("MM");
+                    string year = DateTime.Now.ToString("yyyy");
+                    string hour = DateTime.Now.ToString("HH");
+                    string Min = DateTime.Now.ToString("mm");
+                    string sec = DateTime.Now.ToString("ss");
+                    string CommentId = month + "" + day + "" + Min + "" + sec;
+
+                    string movieId = MovieId;
+                    string guestName = GuestName;
+                    string guestAvatar = GuestName;
+                    string comment = Comment;
+                    string created = year + "-" + month + "-" + day + " " + hour + ":" + Min + ":" + sec;
+
+                    Comment comme = new Comment();
+                    comme.MovieId = movieId;
+                    comme.GuestName = guestName;
+                    comme.GuestAvatar = null;
+                    comme.Comment1 = comment;
+                    comme.Created = DateTime.Parse(created);
+                    comme.CommentId = CommentId;
+                    db.Comments.Add(comme);
+                    db.SaveChanges();
+                }
+                return Json(new
+                {
+                    message = "ok"
+                });
+            }
+            catch (Exception e)
+            {
+                return Json(new
+                {
+                    message = "not ok"
+                });
+            }
+        }
+    
+
         //Lay 1 bo phim
         [HttpGet]
         [Route("api/SingleMovie")]
@@ -364,7 +414,7 @@ namespace WebAPI_Movie.Controllers
         //Luu phim
         [HttpGet]
         [Route("api/SaveMovie")]
-        public IHttpActionResult Save(String movieId, String userId)
+        public IHttpActionResult Save(string movieId, string userId)
         {
             if (movieId != null || userId  != null)
             {
@@ -928,6 +978,39 @@ namespace WebAPI_Movie.Controllers
                 return Json(new
                 {
                     Messages = "Lỗi"
+                });
+            }
+        }
+
+        //Cap nhat luot xem
+        [HttpGet]
+        [Route("api/UpdateViews")]
+        public IHttpActionResult UpdateView(string id)
+        {
+            try
+            {
+                var view = db.Movies.First(x => x.MovieId.Equals(id));
+                if (view != null)
+                {
+                    view.Views = view.Views + 1;
+                    db.SaveChanges();
+                    return Json(new
+                    {
+                        message = "ok"
+                    });
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        message = "not ok"
+                    });
+                }
+            }catch (Exception e)
+            {
+                return Json(new
+                {
+                    Room = "Lỗi !"
                 });
             }
         }

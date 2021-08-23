@@ -1010,7 +1010,7 @@ namespace WebAPI_Movie.Controllers
             {
                 return Json(new
                 {
-                    Room = "Lỗi !"
+                    message = "not ok"
                 });
             }
         }

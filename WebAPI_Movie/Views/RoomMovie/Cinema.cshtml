@@ -24,19 +24,17 @@
 
             $.connection.hub.start().done(function () {
                 hub.server.join(room_id, user_id);
-                
+                hub.server.send_message(room_id, user_id, 'update')
             });
 
             hub.client.message = function (user, msg) {
-               
-                
                 if (msg == 'golive' && user_role == '1') {
                     hub.server.send(room_id, url_video, current_time)
-
-                } else if (msg == 'DelUserAtRoom')
-                {
+                } else if (msg == 'DelUserAtRoom') {
                     Load_user()
-                } else $('#Chatbox ul').append("<li>(" + user + ") : " + msg + "</li>")
+                } else if (msg == 'update') {
+                    Load_user()
+                } else $('#Chatbox ul').append("<li>(" + user + ") : " + msg + " </li>")
             }
 
             hub.client.getlive = function (url, time) {
@@ -82,6 +80,7 @@
                 current_time = video.currentTime
 
             }
+            url_video = url
         }
 
         function deluser() {
@@ -121,7 +120,7 @@
         }
 
         function Load_user() {
-            $("li").remove();
+            $("#online ul li").remove();
             $.ajax({
                 type: "GET",
                 dataType: "json",

@@ -1,0 +1,269 @@
+﻿@model WebAPI_Movie.Models.User
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <style type="text/css">
+        body {
+            background-color: #1F1F2B;
+        }
+
+        #baner {
+            color: white
+        }
+
+        #name {
+            color: white
+        }
+
+            #name b {
+                margin-right:40px
+            }
+        b{
+            color:white
+        }
+        p {
+            color: white
+        }
+        #your_colecttion {
+            background-color: #353543;
+            border-color: #2B2B38;
+        }
+        #list_film {
+            border-color: #2B2B38;
+            background-color: #353543;
+        }
+        img{
+            width : 150px;
+            height:220px;
+            margin-left:10px;
+            margin-top:10px
+        }
+        #Go{
+          
+        }
+        #txt_roomid {
+            margin-left:10px;
+            width: 280px;
+            height: 34px;
+            background-color: #353543;
+            color: white;
+            border: none;
+            border-color: black;
+            border-radius: 5px
+        }
+       
+    </style>
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-4" style="text-align:center">
+            <br />
+            <div id="name">
+                <h3>
+                    <b>Hello. @Model.FullName !</b>
+                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                </h3>
+                <p>Book your favorite moive and play together.</p>
+            </div>
+            <div >
+                <input id="txt_roomid" type="text" class="" placeholder="  Input RoomID...">
+                <button id="Go" class="btn btn-success" type="button">Go!</button>
+            </div>
+            <br />
+            <div style="background-color: #2B2B38 ;" class="btn-group" role="group" aria-label="...">
+                <button id="your_colecttion" onclick="Load_collection()" type="button" class="btn btn-default"><b>Your collection</b></button>
+                <button id="list_film" onclick="Load_suggestions()" type="button" class="btn btn-default"><b>Suggestions</b></button>
+            </div>
+            <p></p>
+            <span style="color:red" class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+            <b id="cate"></b>
+            <div id="collection">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+        Load_collection()
+        Choose_img()
+        Play_movie()
+        Go_movie()
+    });
+
+    var data_Collection = []
+    var data_Movie = []
+    var current
+
+    var urlhost = location.protocol + '//' + location.host
+
+    function Play_movie() {
+        $('body').on('click', '#play', function () {
+            Create_room();
+        })
+    }
+
+    function Go_movie() {
+        $('body').on('click', '#Go', function () {
+            
+            current = ''
+            var roomid = $('#txt_roomid').val()
+            console.log(roomid)
+            if (roomid != '')
+                Add_user(roomid, '0')
+        })
+    }
+
+    function Create_room() {
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            url: urlhost + "/api/CreateRoom",
+            success: function (data) {
+                Add_user(data.RoomId,'1')
+                console.log('create success')
+            }
+        })
+    }
+
+    function Add_user(room, role) {
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            url: urlhost + "/api/AddUserToRoom",
+            data: { 'id': room, 'user': '@Model.UserId' },
+            success: function (data) {
+                if (data.Room == 'Ok') {
+                    console.log('add success')
+                    var url = '@Url.Action("Cinema", "RoomMovie")?id=' + current + '&roomid=' + room + '&userid=' + '@Model.UserId' + '&role=' + role;
+                    window.location.href = url;
+                }
+            }
+        })
+    }
+
+    function Choose_img() {
+        $('body').on('click', 'img', function () {
+            if ($('#cate').text() == "Your collection")
+                data_Collection.forEach(e => {
+                    if (e.MovieId == $(this).attr('id')) {
+                        current = e.MovieId
+                        $('#cate').text(e.Name)
+                        $('#collection').empty()
+                        var div = document.createElement("div");
+                        div.className = "row"
+                        var div_con = document.createElement("div");
+                        div_con.className = "col-md-3 col-md-offset-3";
+                        var image = document.createElement("img");
+                        image.src = e.Thumbnails
+                        $(div_con).append(image)
+                        $(div).append(div_con);
+                        $('#collection').append(div)
+                        $('#collection').append('<br /> ')
+                        $('#collection').append(' <p> ' + e.Description.substring(0, 150)+'...</p>')
+                        $('#collection').append('<button id="play" type="button" class="btn btn-success">Play</button>')
+                    }
+                })
+            if ($('#cate').text() == "Suggestions")
+                data_Movie.forEach(e => {
+                    if (e.MovieId == $(this).attr('id')) {
+                        current = e.MovieId
+                        $('#cate').text(e.Name)
+                        $('#collection').empty()
+                        var div = document.createElement("div");
+                        div.className = "row"
+                        var div_con = document.createElement("div");
+                        div_con.className = "col-md-3 col-md-offset-3";
+                        var image = document.createElement("img");
+                        image.src = e.Thumbnails
+                        $(div_con).append(image)
+                        $(div).append(div_con);
+                        $('#collection').append(div)
+                        $('#collection').append('<br /> ')
+                        $('#collection').append(' <p> ' + e.Description.substring(0, 150) + '...</p>')
+                        $('#collection').append('<button id="play" type="button" class="btn btn-success">Play</button>')
+                    }
+                })
+        })
+    }
+
+    function Load_suggestions() {
+        $('#cate').text("Suggestions")
+        $('#collection').empty()
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            url: urlhost + "/api/Movie",
+            success: function (data) {
+                data_Movie = data.MovieList
+                var list_img = []
+                $(data.MovieList).each(function (index, element) {
+                    var image = document.createElement("img");
+                    image.src = element.Thumbnails
+                    image.id = element.MovieId
+                    list_img.push(image)
+                })
+                for (let i = 0; i < 4; i++) {
+                    var div = document.createElement("div");
+                    div.className = "row"
+                    var div_con = document.createElement("div");
+                    div_con.className = "col-md-3 col-md-offset-3";
+                    $(div_con).append(list_img[i])
+                    i++;
+                    $(div_con).append(list_img[i])
+                    $(div).append(div_con);
+                    $('#collection').append(div)
+                }
+            }
+        })
+
+    }
+
+
+
+    function Load_collection()
+    {
+        $('#cate').text("Your collection")
+        $('#collection').empty()
+          $.ajax({
+              type: "GET",
+              dataType: "json",
+              url: urlhost + "/api/UserSavedFilm",
+              data: { 'id': '@Model.UserId' },
+              success: function (data) {
+                  data_Collection = data.ListSavedFilm
+                  var list_img = []
+                  $(data.ListSavedFilm).each(function (index, element) {
+
+                      var image = document.createElement("img");
+                      image.src = element.Thumbnails
+                      image.id = element.MovieId
+                      list_img.push(image)
+                  })
+                  for (let i = 0; i < list_img.length; i++) {
+                      var div = document.createElement("div");
+                      div.className = "row"
+                      var div_con = document.createElement("div");
+                      div_con.className = "col-md-3 col-md-offset-3";
+                      $(div_con).append(list_img[i])
+                      i++;
+                      $(div_con).append(list_img[i])
+                      $(div).append(div_con);
+                      $('#collection').append(div)
+                  }
+              }
+
+          });
+
+
+    }
+
+</script>

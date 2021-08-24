@@ -1,0 +1,208 @@
+﻿@model WebAPI_Movie.Models.New
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.4.1.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.4.2.js"></script>
+    <script src="~/signalr/Hubs"></script>
+    <script>
+        $(document).ready(function () {
+            if (@Model.Role == '1') {
+                Load_ep()
+            }
+            else {
+                $("#group").append("<button class='btn btn-danger' onclick='Go_live()' >Go live</button>");
+            }
+
+            $.connection.hub.start().done(function () {
+                hub.server.join(room_id, user_id);
+                Load_user()
+            });
+
+            hub.client.message = function (user, msg) {
+                $('#Chatbox ul').append("<li>(" + user + ") : " + msg + "</li>")
+                if (msg == 'golive' && user_role == '1') {
+                    hub.server.send(room_id, url_video, current_time)
+                }
+            }
+
+            hub.client.getlive = function (url, time) {
+                var video = document.getElementById('player');
+                video.src = url
+                video.currentTime = time
+            }
+
+            hub.client.getleave = function (ms) {
+                Load_user()
+            }
+
+        });
+
+        const room_id = '@Model.RoomId';
+        const user_id = '@Model.UserId';
+        const user_role = '@Model.Role';
+        var hub = $.connection.Movie;
+        var urlhost = location.protocol + '//' + location.host
+        var url_video
+        var current_time
+
+        window.onbeforeunload = function () {
+            hub.server.leave(room_id, user_id);
+            hub.server.leaveroom(room_id);
+            if (user_role == "1") {
+                hub.server.send_message(room_id, user_id, 'Stream is offline !')
+
+            }
+            
+            $.connection.hub.stop();
+        }
+
+        function Play_ep(url) {
+            var video = document.getElementById('player');
+            video.src = url;
+            video.play();
+            video.ontimeupdate = function () {
+                current_time = video.currentTime
+
+            }
+        }
+
+        function Go_live() {
+
+            hub.server.send_message(room_id, user_id,'golive')
+
+        }
+
+        function Load_user() {
+            $("li").remove();
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "../api/Room",
+                data: { 'id': '@Model.RoomId' },
+                success: function (data) {
+                    $(data.Room).each(function (index, element) {
+                        var arr = new Array();
+                        arr.push(element.User1)
+                        arr.push(element.User2)
+                        arr.push(element.User3)
+                        arr.push(element.User4)
+                        arr.push(element.User5)
+                        arr.push(element.User6)
+                        arr.push(element.User7)
+                        arr.push(element.User8)
+                        arr.push(element.User9)
+                        arr.push(element.User10)
+                        arr.forEach(e => {
+                            if (e != null) {
+                                $("#online ul").append("<li>" + e + "</li>")
+                            }
+                        });
+                    });
+                }
+            });
+        }
+
+        function Chat() {
+            var text = $('#txt_chat').val();
+            hub.server.send_message(room_id, user_id, text)
+            $('#txt_chat').val('')
+        }
+
+        function Load_ep() {
+            if ('@Model.Movies' != null) {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: urlhost + '/api/FilmByMovieId',
+                    data: { 'id': '@Model.Movies' },
+                    success: function (data) {
+                        $(data.FilmList).each(function (index, element) {
+                            index++
+                            var btn = "<button class='btn btn-default' onclick='Play_ep(" + '"' + element.URL + '"' + ")' >" + index + "</button>";
+                            $("#group").append(btn);
+                            url_video = element.URL
+                        });
+                    }
+                });
+            }
+        }
+
+    </script>
+    <style type="text/css">
+        body {
+            background-color: #1F1F2B;
+        }
+        b{
+            color:white
+        }
+        #txt_chat {
+            margin-left: 10px;
+            width: 280px;
+            height: 34px;
+            background-color: #353543;
+            color: white;
+            border: none;
+            border-color: black;
+            border-radius: 5px
+        }
+    </style>
+    <title>Cinema</title>
+
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-4" style="text-align:center">
+            <br />
+            <h4><b>RoomID : @Model.RoomId</b></h4>
+            <br />
+            <div style="margin-left:15px; text-align: center;">
+                <video id="player" autoplay controls width="100%" height="100%">
+                </video>
+            </div>
+            <br />
+            <div style=" margin-left:10px;" id="group" role="group" aria-label="...">
+                <b style="text-align:right">Ep:</b>
+            </div>
+            <br />
+            <table style="width:100% ;color:white; text-align:center;margin-left:10px">
+                <tr>
+                    <th style="width:30%">Online</th>
+                    <th style="width:70%">Chat Room</th>
+                </tr>
+                <tr>
+                    <td id="online" style="width:30%; text-align:left">
+                        <ul>
+                        </ul>
+                    </td>
+                    <td id="Chatbox" style="width:70%">
+                        <div style="width: 95%; background-color: #2B2B36;height:150px ;text-align:left ;overflow: auto">
+                            <ul  >
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <br />
+            <div>
+                <input id="txt_chat" type="text" class="" placeholder="">
+                <button id="send" class="btn btn-success" onclick="Chat()" type="button">Send</button>
+            </div>
+        </div>
+    </div>
+    
+            <div>
+                <p>@Model.Movies</p>
+                <p>@Model.RoomId</p>
+                <p>@Model.UserId</p>
+                <p>@Model.Role</p>
+            </div>
+</body>
+</html>

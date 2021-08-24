@@ -15,14 +15,14 @@ namespace WebAPI_Movie.Hubs
         public async Task join(string roomName, string name)
         {
             await Groups.Add(Context.ConnectionId, roomName);
-            Clients.Group(roomName).message(" (" + name + ") joined.");
+            Clients.Group(roomName).message(name," joined");
             Clients.OthersInGroup(roomName).get(roomName);
         }
 
         public async Task leave(string roomName, string name)
         {
             await Groups.Remove(Context.ConnectionId, roomName);
-            Clients.Group(roomName).message(" (" + name + ") leave.");
+            Clients.Group(roomName).message(name," leaved");
            
         }
         public void leaveroom(string roomName) {
@@ -39,6 +39,16 @@ namespace WebAPI_Movie.Hubs
         public void send(string group,string url ,string time)
         {
             Clients.OthersInGroup(group).getlive(url, time);
+        }
+
+        public void go_live(string user, string url, string time)
+        {
+            Clients.User(user).get_live(url, time);
+        }
+
+        public void send_message(string group , string name ,string msg)
+        {
+            Clients.Group(group).message(name,msg);
         }
 
     }

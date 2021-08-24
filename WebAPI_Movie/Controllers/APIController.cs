@@ -676,9 +676,20 @@ namespace WebAPI_Movie.Controllers
             if (db.Users.Any(p => p.Username.Equals(i.Username) && p.Password.Equals(i.Password)))
             {
                 var User = db.Users.First(p => p.Username.Equals(i.Username));
+                var User2 = new User();
+                User2.UserId = User.UserId;
+                User2.Username = User.Username;
+                User2.Password = User.Password;
+                User2.FullName = User.FullName;
+                User2.Birthday = User.Birthday;
+                User2.Address = User.Address;
+                User2.Phone = User.Phone;
+                User2.Email = User.Email;
+                User2.Avatar = User.Avatar;
+                User2.Wallet = User.Wallet;
                 return Json(new
                 {
-                    message = User
+                    message = User2
                 });
             }
             else

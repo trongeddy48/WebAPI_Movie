@@ -788,63 +788,54 @@ namespace WebAPI_Movie.Controllers
         {
             try
             {
-                var room = db.Rooms.First(p => p.Equals(id));
-                if (room != null) {
-                    
-                    if (room.User1.Equals(user))
+                var room = db.Rooms.First(p => p.RoomId.Equals(id));
+                if (room != null) 
+                {
+
+                    if (room.User1 != null && room.User1.Equals(user))
                     {
-                        room.User1 = "";
-                        
+                        room.User1 = null;
                     }
-                    else if (room.User2.Equals(user))
+                    else if (room.User2 != null && room.User2.Equals(user))
                     {
-                        room.User2 = "";
-                        
+                        room.User2 = null;
                     }
-                    else if (room.User3.Equals(user))
+                    else if (room.User3 != null && room.User3.Equals(user))
                     {
-                        room.User3 = "";
-                        
+                        room.User3 = null;
                     }
-                    else if (room.User4.Equals(user))
+                    else if (room.User4 != null && room.User4.Equals(user))
                     {
-                        room.User4 = "";
-                        
+                        room.User4 = null;
                     }
-                    else if (room.User5.Equals(user))
+                    else if (room.User5 != null && room.User5.Equals(user))
                     {
-                        room.User5 = "";
-                        
+                        room.User5 = null;
                     }
-                    else if (room.User6.Equals(user))
+                    else if (room.User6 != null && room.User6.Equals(user))
                     {
-                        room.User6 = "";
-                        
+                        room.User6 = null;
                     }
-                    else if (room.User7.Equals(user))
+                    else if (room.User7 != null && room.User7.Equals(user))
                     {
-                        room.User7 = "";
-                        
+                        room.User7 = null;
                     }
-                    else if (room.User8.Equals(user))
+                    else if (room.User8 != null && room.User8.Equals(user))
                     {
-                        room.User8 = "";
-                        
+                        room.User8 = null;
                     }
-                    else if (room.User9.Equals(user))
+                    else if (room.User9 != null && room.User9.Equals(user))
                     {
-                        room.User9 = "";
-                        
+                        room.User9 = null;
                     }
-                    else if (room.User10.Equals(user))
+                    else if (room.User10 != null && room.User10.Equals(user))
                     {
-                        room.User10 = "";
-                        
+                        room.User10 = null;
                     }
                     db.SaveChanges();
                     return Json(new
                     {
-                        Room = "Ok"
+                        Room = "ok"
                     });
                 }
                 else

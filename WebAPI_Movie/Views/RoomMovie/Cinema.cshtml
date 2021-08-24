@@ -29,11 +29,14 @@
 
             hub.client.message = function (user, msg) {
                
-                $('#Chatbox ul').append("<li>(" + user + ") : " + msg + "</li>")
+                
                 if (msg == 'golive' && user_role == '1') {
                     hub.server.send(room_id, url_video, current_time)
-                    
-                }
+
+                } else if (msg == 'DelUserAtRoom')
+                {
+                    Load_user()
+                } else $('#Chatbox ul').append("<li>(" + user + ") : " + msg + "</li>")
             }
 
             hub.client.getlive = function (url, time) {
@@ -64,6 +67,9 @@
                 hub.server.send_message(room_id, user_id, 'Stream is offline !')
                 delroom();
             }
+            if (user_role == "0") {
+                deluser();
+            }
             
             $.connection.hub.stop();
         }
@@ -75,6 +81,20 @@
             video.ontimeupdate = function () {
                 current_time = video.currentTime
 
+            }
+        }
+
+        function deluser() {
+            if (room_id != null) {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "../api/DelUserAtRoom",
+                    data: { 'id': room_id, 'user': user_id },
+                    success: function (data) {
+                        hub.server.send_message(room_id, user_id, 'DelUserAtRoom')
+                    }
+                });
             }
         }
 

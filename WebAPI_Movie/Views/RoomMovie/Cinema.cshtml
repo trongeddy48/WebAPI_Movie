@@ -35,6 +35,11 @@
                 } else if (msg == 'update') {
                     Load_user()
                 } else $('#Chatbox ul').append("<li>(" + user + ") : " + msg + " </li>")
+
+                window.setInterval(function () {
+                    var elem = document.getElementById('data');
+                    elem.scrollTop = elem.scrollHeight;
+                }, 2000);
             }
 
             hub.client.getlive = function (url, time) {
@@ -222,7 +227,7 @@
                         </ul>
                     </td>
                     <td id="Chatbox" style="width:70%">
-                        <div style="width: 95%; background-color: #2B2B36;height:200px ;text-align:left ;overflow: auto">
+                        <div id="data" style="width: 95%; background-color: #2B2B36;height:200px ;text-align:left ;overflow: auto">
                             <ul  >
                             </ul>
                         </div>

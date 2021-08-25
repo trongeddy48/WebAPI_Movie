@@ -225,6 +225,7 @@
     <Compile Include="Controllers\RoomController.cs" />
     <Compile Include="Controllers\RoomMovieController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Controllers\VerController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -237,6 +238,7 @@
     <Compile Include="Models\Film.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Liking.cs" />
+    <Compile Include="Models\Model1.cs" />
     <Compile Include="Models\Movie.cs" />
     <Compile Include="Models\MovieAndRoom.cs" />
     <Compile Include="Models\New.cs" />
@@ -246,6 +248,7 @@
     <Compile Include="Models\Studio.cs" />
     <Compile Include="Models\StudioController.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\Verapp.cs" />
     <Compile Include="Models\ViewModel\CategoryView.cs" />
     <Compile Include="Models\ViewModel\CommentView.cs" />
     <Compile Include="Models\ViewModel\FilmView.cs" />
@@ -256,6 +259,7 @@
     <Compile Include="Models\ViewModel\SaveView.cs" />
     <Compile Include="Models\ViewModel\StudioView.cs" />
     <Compile Include="Models\ViewModel\UserView.cs" />
+    <Compile Include="Models\ViewModel\VerappView.cs" />
     <Compile Include="Models\XemGiDoContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
@@ -326,6 +330,7 @@
     <Content Include="Views\Room\index.cshtml" />
     <Content Include="Views\RoomMovie\Index.cshtml" />
     <Content Include="Views\RoomMovie\Cinema.cshtml" />
+    <Content Include="Views\Ver\Ver.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -397,6 +402,13 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <Target Name="CopyRoslynFiles" AfterTargets="AfterBuild" Condition="!$(Disable_CopyWebApplication) And '$(OutDir)' != '$(OutputPath)'">
+    <ItemGroup>
+      <RoslynFiles Include="$(CscToolPath)\*" />
+    </ItemGroup>
+    <MakeDir Directories="$(WebProjectOutputDir)\bin\roslyn" />
+    <Copy SourceFiles="@(RoslynFiles)" DestinationFolder="$(WebProjectOutputDir)\bin\roslyn" SkipUnchangedFiles="true" Retries="$(CopyRetryCount)" RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

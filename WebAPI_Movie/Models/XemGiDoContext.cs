@@ -22,6 +22,7 @@ namespace WebAPI_Movie.Models
         public virtual DbSet<Series> Series { get; set; }
         public virtual DbSet<Studio> Studios { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Verapp> Verapps { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -205,6 +206,14 @@ namespace WebAPI_Movie.Models
                 .HasMany(e => e.Saveds)
                 .WithRequired(e => e.User)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Verapp>()
+                .Property(e => e.Id)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Verapp>()
+                .Property(e => e.URLVer)
+                .IsUnicode(false);
         }
     }
 }

@@ -1016,5 +1016,24 @@ namespace WebAPI_Movie.Controllers
                 });
             }
         }
+
+        //Lay danh sach phien ban
+        [HttpGet]
+        [Route("api/Verapp")]
+        public IHttpActionResult Verapp()
+        {
+            try
+            {
+                List<Verapp> VerList = db.Verapps.OrderByDescending(p => p.Ver).Take(1).ToList();
+                return Json(new
+                {
+                    Verapp = VerList
+                });
+            }
+            catch (Exception e)
+            {
+                return NotFound();
+            }
+        }
     }
 }

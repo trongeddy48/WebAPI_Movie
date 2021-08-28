@@ -1027,7 +1027,7 @@ namespace WebAPI_Movie.Controllers
                 List<Verapp> VerList = db.Verapps.OrderByDescending(p => p.Ver).Take(1).ToList();
                 return Json(new
                 {
-                    Verapp = VerList
+                    Verapp = VerList[0]
                 });
             }
             catch (Exception e)

@@ -14,6 +14,8 @@
     <script src="~/signalr/Hubs"></script>
     <script>
         $(document).ready(function () {
+
+            Load_name()
             Load_user()
             if (@Model.Role == '1') {
                 Load_ep()
@@ -24,7 +26,8 @@
 
             $.connection.hub.start().done(function () {
                 hub.server.join(room_id, user_id);
-                hub.server.send_message(room_id, user_id, 'update')
+                hub.server.send_message(room_id, user_name, 'update')
+                Go_live()
             });
 
             hub.client.message = function (user, msg) {
@@ -34,12 +37,12 @@
                     Load_user()
                 } else if (msg == 'update') {
                     Load_user()
-                } else $('#Chatbox ul').append("<li>(" + user + ") : " + msg + " </li>")
+                } else $('#Chatbox ul').append("<li>" + user + " : " + msg + " </li>")
 
                 window.setInterval(function () {
                     var elem = document.getElementById('data');
                     elem.scrollTop = elem.scrollHeight;
-                }, 2000);
+                }, 5000);
             }
 
             hub.client.getlive = function (url, time) {
@@ -58,16 +61,27 @@
         const room_id = '@Model.RoomId';
         const user_id = '@Model.UserId';
         const user_role = '@Model.Role';
+        var user_name
         var hub = $.connection.Movie;
         var urlhost = location.protocol + '//' + location.host
         var url_video
         var current_time
+        
+
+
+        window.onorientationchange = function () {
+            var rotate = (screen.orientation || {}).type || screen.mozOrientation || screen.msOrientation;
+            if (rotate === "landscape-primary")
+                openFullscreen()
+            if (rotate === "portrait-primary")
+                closeFullscreen()
+        }
 
         window.onbeforeunload = function () {
             hub.server.leave(room_id, user_id);
             hub.server.leaveroom(room_id);
             if (user_role == "1") {
-                hub.server.send_message(room_id, user_id, 'Stream is offline !')
+                hub.server.send_message(room_id, user_name, 'Stream is offline !')
                 delroom();
             }
             if (user_role == "0") {
@@ -75,6 +89,28 @@
             }
             
             $.connection.hub.stop();
+        }
+
+        function openFullscreen() {
+            var video = document.getElementById('player');
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) { /* Safari */
+                video.webkitRequestFullscreen();
+            } else if (video.msRequestFullscreen) { /* IE11 */
+                video.msRequestFullscreen();
+            }
+        }
+
+        function closeFullscreen() {
+
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) { /* Safari */
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { /* IE11 */
+                document.msExitFullscreen();
+            }
         }
 
         function Play_ep(url) {
@@ -96,7 +132,7 @@
                     url: "../api/DelUserAtRoom",
                     data: { 'id': room_id, 'user': user_id },
                     success: function (data) {
-                        hub.server.send_message(room_id, user_id, 'DelUserAtRoom')
+                        hub.server.send_message(room_id, user_name, 'DelUserAtRoom')
                     }
                 });
             }
@@ -107,7 +143,7 @@
                 $.ajax({
                     type: "GET",
                     dataType: "json",
-                    url: "../api/DeleteRoom",
+                    url: urlhost + '/api/DeleteRoom',
                     data: { 'id': room_id },
                     success: function (data) {
                         if (data.message == "ok") {
@@ -120,8 +156,23 @@
 
         function Go_live() {
 
-            hub.server.send_message(room_id, user_id,'golive')
+            hub.server.send_message(room_id, user_name, 'golive')
 
+        }
+
+        function Load_name() {
+            if (room_id != null) {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: '../api/User',
+                    data: { 'id': user_id },
+                    success: function (data) {
+                        user_name = data.User.FullName
+                        console.log(user_name)
+                    }
+                });
+            }
         }
 
         function Load_user() {
@@ -156,7 +207,7 @@
 
         function Chat() {
             var text = $('#txt_chat').val();
-            hub.server.send_message(room_id, user_id, text)
+            hub.server.send_message(room_id, user_name, text)
             $('#txt_chat').val('')
         }
 
@@ -187,6 +238,7 @@
         b{
             color:white
         }
+
         #txt_chat {
             margin-left: 10px;
             width: 280px;
@@ -195,8 +247,15 @@
             color: white;
             border: none;
             border-color: black;
-            border-radius: 5px
+            border-radius: 5px;
+           
         }
+
+        #online {
+            background-color: #2B2B36;
+            border-right: 10px solid #1F1F2B
+        }
+        
     </style>
     <title>Cinema</title>
 
@@ -214,6 +273,7 @@
             <br />
             <div style=" margin-left:10px;" id="group" role="group" aria-label="...">
                 <b style="text-align:right">Ep:</b>
+                <button id="full_screen" class="btn btn-warning"  onclick="openFullscreen()" type="button"><span style="color:white" class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span></button>
             </div>
             <br />
             <table style="width:100% ;color:white; text-align:center;margin-left:10px">
